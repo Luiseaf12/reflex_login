@@ -1,4 +1,4 @@
-from .login import login_page, user_list
+from .login import login_page
 
 
-__all__ = ["login_page", "user_list"]
+__all__ = ["login_page"]

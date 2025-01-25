@@ -20,20 +20,6 @@ def login_error() -> rx.Component:
     )
 
 
-def user_list() -> rx.Component:
-    """Render the list of available users."""
-    return rx.vstack(
-        rx.heading("Usuarios Disponibles", size="6"),
-        rx.table.root(
-            rx.table.column_header_cell("username", width="35%"),
-            pagination=True,
-            search=True,
-            data=LoginState.user_list,
-        ),
-        width="100%",
-    )
-
-
 def login_form() -> rx.Component:
     """Render the login form."""
     return rx.form(
@@ -45,7 +31,6 @@ def login_form() -> rx.Component:
             rx.text("Password"),
             input_100w("password", type="password"),
             rx.button("Sign in", width="100%"),
-            user_list(),  # Agregamos la lista de usuarios
             min_width=MIN_WIDTH,
         ),
         on_submit=LoginState.on_submit,
