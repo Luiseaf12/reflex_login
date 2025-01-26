@@ -16,8 +16,10 @@ class UserState(rx.State):
 
     def toggle_form(self):
         """Toggle the form visibility."""
-        self.show_form = not self.show_form
-        self.clear_form()
+        if self.show_form:
+            self.clear_form()
+        else:
+            self.show_form = True
 
     def clear_form(self):
         """Clear the form fields."""
@@ -25,9 +27,15 @@ class UserState(rx.State):
         self.password = ""
         self.email = ""
         self.error_message = ""
+        self.show_form = False
 
-    def create_user(self):
-        """Create a new user."""
+    def create_user(self, form_data: dict):
+        """Create a new user from form data."""
+        # Extract form data
+        self.username = form_data.get("username", "")
+        self.password = form_data.get("password", "")
+        self.email = form_data.get("email", "")
+
         if not self.username or not self.password or not self.email:
             self.error_message = "Todos los campos son requeridos"
             return
@@ -51,8 +59,10 @@ class UserState(rx.State):
             )
             session.add(new_user)
             session.commit()
+            session.refresh(new_user)
 
-        self.toggle_form()
+            # Clear form and close dialog only on success
+            self.clear_form()
 
 
 class ListState(rx.State):
