@@ -144,6 +144,7 @@ def add_user_button() -> rx.Component:
             border=f"2px solid {rx.color('accent', 7)}",
             border_radius="25px",
         ),
+        open=UserState.show_form,  # Control del estado del diálogo
     )
 
 
