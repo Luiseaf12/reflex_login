@@ -6,9 +6,9 @@ from ..ui import index_item
 
 
 @require_login
-def protected_page() -> rx.Component:
+def info_page() -> rx.Component:
     return rx.vstack(
-        rx.text("Pagina protegida"),
+        rx.text("Informacion"),
         index_item(),
         padding="2em",
     )

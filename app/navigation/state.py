@@ -13,5 +13,8 @@ class NavState(rx.State):
     def to_logout(self):
         return rx.redirect(routes.LOGOUT_ROUTE)
 
+    def to_info(self):
+        return rx.redirect(routes.INFO_ROUTE)
+
     def to_protected(self):
         return rx.redirect(routes.PROTECTED_ROUTE)
