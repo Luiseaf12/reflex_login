@@ -3,6 +3,7 @@
 import reflex as rx
 
 from ..login import LoginState
+from ..state import SessionState
 from .components import input_100w, MIN_WIDTH, PADDING_TOP
 
 
@@ -50,3 +51,24 @@ def login_page() -> rx.Component:
         ),
         padding_top=PADDING_TOP,
     )
+
+
+def logout_page() -> rx.Component:
+    # Welcome Page (Index)
+    my_child = rx.vstack(
+        rx.heading("Are you sure?", size="7"),
+        rx.hstack(
+            rx.button(
+                "No, stay logged in", color_scheme="gray", on_click=rx.redirect("/")
+            ),
+            rx.button(
+                "yes logout", on_click=SessionState.perform_logout, color_scheme="red"
+            ),
+        ),
+        spacing="5",
+        justify="center",
+        text_align="center",
+        min_height="85vh",
+        id="my-child",
+    )
+    return my_child

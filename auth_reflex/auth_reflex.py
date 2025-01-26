@@ -4,10 +4,11 @@ import reflex as rx
 from sqlmodel import select
 from typing import List
 
-from .auth.pages import login_page
+from .auth.pages import login_page, logout_page
 from .auth.login import LoginState
 from .auth.user import LocalUser
-from .navigation import routes
+from .navigation import routes, NavState
+from .protected import protected_page
 
 
 class UserState(rx.State):
@@ -159,14 +160,71 @@ def user_list() -> rx.Component:
     )
 
 
+def logout_item() -> rx.Component:
+    return rx.box(
+        rx.hstack(
+            rx.icon("log-out"),
+            rx.text("Log out", size="4"),
+            width="100%",
+            paddingX="0.5rem",
+            paddingY="0.75rem",
+            align="center",
+            style={
+                "_hover": {
+                    "cursor": "pointer",
+                    "bg": rx.color("accent", 4),
+                    "color": rx.color("accent", 11),
+                },
+                "color": rx.color("accent", 11),
+                "borderRadius": "0.5em",
+            },
+        ),
+        on_click=NavState.to_logout,
+        as_="button",
+        width="100%",
+    )
+
+
+def login_item() -> rx.Component:
+    return rx.box(
+        rx.hstack(
+            rx.icon("log-in"),
+            rx.text("Login", size="4"),
+            width="100%",
+            paddingX="0.5rem",
+            paddingY="0.75rem",
+            align="center",
+            style={
+                "_hover": {
+                    "cursor": "pointer",
+                    "bg": rx.color("accent", 4),
+                    "color": rx.color("accent", 11),
+                },
+                "color": rx.color("accent", 11),
+                "borderRadius": "0.5em",
+            },
+        ),
+        on_click=NavState.to_login,
+        as_="button",
+        width="100%",
+    )
+
+
 def index() -> rx.Component:
     return rx.vstack(
         rx.text("Hello world!"),
-        rx.link(rx.button("Login", route=routes.LOGIN_ROUTE)),
+        login_item(),
+        logout_item(),
         user_list(),
         padding="2em",
     )
 
 
-app.add_page(index, route=routes.HOME_ROUTE, title="Home")
-app.add_page(login_page, route=routes.LOGIN_ROUTE, title="Login")
+app.add_page(index, "/", title="Home")
+app.add_page(login_page, routes.LOGIN_ROUTE, title="Login")
+app.add_page(
+    logout_page,
+    route=routes.LOGOUT_ROUTE,
+    title="Logout",
+)
+app.add_page(protected_page, "/protected", title="Protected")
