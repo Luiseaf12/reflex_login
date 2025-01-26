@@ -10,6 +10,8 @@ from .auth.user import LocalUser
 from .navigation import routes, NavState
 from .protected import protected_page
 
+from .user.forms import user_list
+
 
 class UserState(rx.State):
     """State for user management."""
@@ -64,7 +66,7 @@ class UserState(rx.State):
 class ListState(rx.State):
     """State for user listing."""
 
-    @rx.var
+    @rx.var(cache=False)
     def users(self) -> List[LocalUser]:
         """Get all users from database."""
         with rx.session() as session:
@@ -122,7 +124,7 @@ def create_user_form() -> rx.Component:
     )
 
 
-def user_list() -> rx.Component:
+def user_listxx() -> rx.Component:
     """Render the list of available users."""
     return rx.vstack(
         rx.hstack(
@@ -210,11 +212,37 @@ def login_item() -> rx.Component:
     )
 
 
+def protected_item() -> rx.Component:
+    return rx.box(
+        rx.hstack(
+            rx.icon("shield-check"),
+            rx.text("pagina protegida", size="4"),
+            width="100%",
+            paddingX="0.5rem",
+            paddingY="0.75rem",
+            align="center",
+            style={
+                "_hover": {
+                    "cursor": "pointer",
+                    "bg": rx.color("accent", 4),
+                    "color": rx.color("accent", 11),
+                },
+                "color": rx.color("accent", 11),
+                "borderRadius": "0.5em",
+            },
+        ),
+        on_click=NavState.to_protected,
+        as_="button",
+        width="100%",
+    )
+
+
 def index() -> rx.Component:
     return rx.vstack(
         rx.text("Hello world!"),
         login_item(),
         logout_item(),
+        protected_item(),
         user_list(),
         padding="2em",
     )

@@ -2,8 +2,8 @@
 
 import reflex as rx
 
-from ..login import LoginState
-from ..state import SessionState
+from .login import LoginState
+from .state import SessionState
 from .components import input_100w, MIN_WIDTH, PADDING_TOP
 
 
