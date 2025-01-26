@@ -2,7 +2,7 @@ import reflex as rx
 
 from .auth.pages import login_page, logout_page
 from .pages import protected_page, info_page
-from .user.search import search as user_search
+from .user.search import autocomplete_search
 from .search import search
 from .navigation import routes
 from .ui import (
@@ -45,7 +45,7 @@ def index() -> rx.Component:
         info_item(),
         user_list(),
         dark_mode_toggle_item(),
-        user_search(),
+        autocomplete_search(),
         padding="2em",
     )
 

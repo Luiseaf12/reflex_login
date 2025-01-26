@@ -1,39 +1,33 @@
 import reflex as rx
-from dataclasses import dataclass
-from typing import List
-from .state import UserState, ListState
+from sqlmodel import select, func
+
+from ..auth.model import (
+    LocalUser,
+)
 
 
-@dataclass
-class UserItem:
-    """User data structure for display."""
-
-    id: int
-    username: str
-    email: str
-    status: str
-
-
-class SearchState(rx.State):
-    """State for song search functionality."""
+class AutocompleteUserState(rx.State):
+    """Estado para la búsqueda de usuarios con autocompletado."""
 
     search_text: str = ""
-    users: List[UserItem] = [
-        UserItem(1, "luiseaf", "email@domain.com", "A"),
-        UserItem(2, "coke", "email@domain.com", "A"),
-        UserItem(3, "alvar", "email@domain.com", "A"),
-    ]
 
     @rx.var
-    def filtered_users(self) -> List[UserItem]:
-
+    def suggestions(self) -> list[LocalUser]:
+        """Obtiene una lista de usuarios que coinciden con el texto de búsqueda."""
         if not self.search_text:
-            return self.users
+            return []
         search_lower = self.search_text.lower()
-        return [user for user in self.users if search_lower in user.username.lower()]
+
+        # Consulta a la base de datos usando LIKE para coincidencia parcial
+        with rx.session() as session:
+            return session.exec(
+                select(LocalUser).where(
+                    func.lower(LocalUser.username).like(f"%{search_lower}%")
+                )
+            ).all()
 
 
-def user_card(user: UserItem) -> rx.Component:
+def cell_card(user: LocalUser) -> rx.Component:
 
     return rx.box(
         rx.flex(
@@ -52,12 +46,7 @@ def user_card(user: UserItem) -> rx.Component:
     )
 
 
-def search() -> rx.Component:
-    """Create the search interface.
-
-    Returns:
-        Search component with input and filtered song list.
-    """
+def autocomplete_search() -> rx.Component:
     return rx.card(
         rx.flex(
             rx.input(
@@ -65,12 +54,12 @@ def search() -> rx.Component:
                     rx.icon(tag="search"),
                 ),
                 placeholder="Buscar usuarios...",
-                value=SearchState.search_text,
-                on_change=SearchState.set_search_text,
+                value=AutocompleteUserState.search_text,
+                on_change=AutocompleteUserState.set_search_text,
                 debounce=300,
             ),
             rx.flex(
-                rx.foreach(SearchState.filtered_users, lambda x: user_card(x)),
+                rx.foreach(AutocompleteUserState.suggestions, lambda x: cell_card(x)),
                 direction="column",
                 spacing="1",
             ),

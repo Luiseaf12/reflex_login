@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+
 import reflex as rx
 from sqlmodel import select
 
 from . import routes
 from .local_auth import LocalAuthState
-from .user import LocalUser
+from .model import LocalUser
 
 
 class LoginState(LocalAuthState):

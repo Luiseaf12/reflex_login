@@ -14,7 +14,7 @@ from sqlmodel import select
 import reflex as rx
 
 from .auth_session import LocalAuthSession
-from .user import LocalUser
+from .model import LocalUser
 
 
 AUTH_TOKEN_LOCAL_STORAGE_KEY = "_auth_token"
