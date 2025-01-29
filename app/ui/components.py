@@ -128,6 +128,31 @@ def info_item() -> rx.Component:
     )
 
 
+def contact_item() -> rx.Component:
+    return rx.box(
+        rx.hstack(
+            rx.icon("contact"),
+            rx.text("contactos", size="4"),
+            width="100%",
+            paddingX="0.5rem",
+            paddingY="0.75rem",
+            align="center",
+            style={
+                "_hover": {
+                    "cursor": "pointer",
+                    "bg": rx.color("accent", 4),
+                    "color": rx.color("accent", 11),
+                },
+                "color": rx.color("accent", 11),
+                "borderRadius": "0.5em",
+            },
+        ),
+        on_click=NavState.to_contact,
+        as_="button",
+        width="100%",
+    )
+
+
 def dark_mode_toggle_item() -> rx.Component:
     return rx.box(
         rx.hstack(

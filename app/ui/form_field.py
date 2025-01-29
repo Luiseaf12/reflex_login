@@ -17,19 +17,20 @@ def form_field(
             rx.hstack(
                 rx.icon(icon, size=16, stroke_width=1.5),
                 rx.form.label(label),
-                rx.text("*", color="red") if required else None,
+                rx.cond(
+                    required,
+                    rx.text("*", color="red"),
+                    rx.text(""),
+                ),
                 align="center",
                 spacing="2",
             ),
-            rx.form.control(
-                rx.input(
-                    placeholder=placeholder,
-                    type=type,
-                    value=value,
-                    on_change=on_change,
-                    required=required,
-                ),
-                as_child=True,
+            rx.input(
+                placeholder=placeholder,
+                type=type,
+                value=value,
+                on_change=on_change,
+                required=required,
             ),
             direction="column",
             spacing="1",

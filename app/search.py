@@ -25,7 +25,7 @@ class SearchState(rx.State):
         Song("Is It True", "TO", "Rock"),
     ]
 
-    @rx.var
+    @rx.var(cache=False)
     def filtered_songs(self) -> List[Song]:
 
         if not self.search_text:

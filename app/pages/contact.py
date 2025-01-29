@@ -2,14 +2,14 @@ import reflex as rx
 
 from ..auth.login import require_login
 from ..navigation import NavState
-from ..ui import index_item, info_item
+from ..ui import index_item, protected_item
 
 
 @require_login
-def protected_page() -> rx.Component:
+def contact_page() -> rx.Component:
     return rx.vstack(
-        rx.text("Pagina protegida"),
+        rx.text("contactos"),
         index_item(),
-        info_item(),
+        protected_item(),
         padding="2em",
     )

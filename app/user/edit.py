@@ -1,18 +1,9 @@
 import reflex as rx
 from ..ui.form_field import form_field
-from .state import UserState, ListState
+from .state import UserState
 
 
 # Atoms (Átomos)
-def icon_button(icon: str, text: str, size: str = "3") -> rx.Component:
-    """Átomo para botón con icono."""
-    return rx.button(
-        rx.icon(icon, size=26),
-        rx.text(text, size="4", display=["none", "none", "block"]),
-        size=size,
-    )
-
-
 def badge_icon(icon: str, size: int = 34) -> rx.Component:
     """Átomo para badge con icono."""
     return rx.badge(
@@ -24,18 +15,18 @@ def badge_icon(icon: str, size: int = 34) -> rx.Component:
 
 
 # Molecules (Moléculas)
-def dialog_header() -> rx.Component:
-    """Molécula para el encabezado del diálogo."""
+def edit_dialog_header() -> rx.Component:
+    """Molécula para el encabezado del diálogo de edición."""
     return rx.hstack(
-        badge_icon("users"),
+        badge_icon("pencil"),
         rx.vstack(
             rx.dialog.title(
-                "Agregar usuario",
+                "Editar usuario",
                 weight="bold",
                 margin="0",
             ),
             rx.dialog.description(
-                "Llena el formulario con la información del usuario",
+                "Modifica la información del usuario",
             ),
             spacing="1",
             height="100%",
@@ -49,8 +40,8 @@ def dialog_header() -> rx.Component:
     )
 
 
-def user_form_fields() -> rx.Component:
-    """Molécula que agrupa los campos del formulario."""
+def edit_form_fields() -> rx.Component:
+    """Molécula que agrupa los campos del formulario de edición."""
     return rx.flex(
         form_field(
             "Usuario",
@@ -58,6 +49,8 @@ def user_form_fields() -> rx.Component:
             "text",
             "username",
             "user",
+            value=UserState.username,
+            on_change=UserState.set_username,
             required=True,
         ),
         form_field(
@@ -66,7 +59,9 @@ def user_form_fields() -> rx.Component:
             "password",
             "password",
             "lock",
-            required=True,
+            value=UserState.password,
+            on_change=UserState.set_password,
+            required=False,
         ),
         form_field(
             "Email",
@@ -74,6 +69,8 @@ def user_form_fields() -> rx.Component:
             "email",
             "email",
             "mail",
+            value=UserState.email,
+            on_change=UserState.set_email,
             required=True,
         ),
         direction="column",
@@ -81,8 +78,8 @@ def user_form_fields() -> rx.Component:
     )
 
 
-def form_actions() -> rx.Component:
-    """Molécula para los botones de acción."""
+def edit_form_actions() -> rx.Component:
+    """Molécula para los botones de acción de edición."""
     return rx.flex(
         rx.dialog.close(
             rx.button(
@@ -93,7 +90,7 @@ def form_actions() -> rx.Component:
             ),
         ),
         rx.button(
-            "Crear Usuario",
+            "Guardar Cambios",
             type="submit",
             color_scheme="grass",
         ),
@@ -105,36 +102,40 @@ def form_actions() -> rx.Component:
 
 
 # Organisms (Organismos)
-def user_form() -> rx.Component:
-    """Organismo que representa el formulario de usuario."""
+def edit_user_form() -> rx.Component:
+    """Organismo que representa el formulario de edición de usuario."""
     return rx.form.root(
         rx.flex(
-            user_form_fields(),
+            edit_form_fields(),
             rx.text(
                 UserState.error_message,
                 color="red",
                 size="4",
             ),
-            form_actions(),
+            edit_form_actions(),
             direction="column",
             spacing="4",
         ),
-        on_submit=UserState.create_user,
+        on_submit=UserState.update_user,
         reset_on_submit=False,
     )
 
 
-def add_user_button() -> rx.Component:
-    """Organismo que representa el diálogo completo para agregar usuario."""
+def edit_user_button(user: dict) -> rx.Component:
+    """Átomo para botón de edición de usuario."""
     return rx.dialog.root(
         rx.dialog.trigger(
-            icon_button("plus", "Agregar Usuario"),
-            on_click=UserState.toggle_form,
+            rx.button(
+                rx.icon("pencil", size=20),
+                size="1",
+                variant="soft",
+                on_click=lambda: UserState.set_edit_user(user),
+            ),
         ),
         rx.dialog.content(
-            dialog_header(),
+            edit_dialog_header(),
             rx.flex(
-                user_form(),
+                edit_user_form(),
                 width="100%",
                 direction="column",
                 spacing="4",
@@ -144,5 +145,5 @@ def add_user_button() -> rx.Component:
             border=f"2px solid {rx.color('accent', 7)}",
             border_radius="25px",
         ),
-        open=UserState.show_form,  # Control del estado del diálogo
+        open=UserState.show_form,
     )

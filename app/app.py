@@ -1,7 +1,7 @@
 import reflex as rx
 
 from .auth.pages import login_page, logout_page
-from .pages import protected_page, info_page
+from .pages import protected_page, info_page, contact_page
 from .user.search import autocomplete_search
 from .search import search
 from .navigation import routes
@@ -11,6 +11,7 @@ from .ui import (
     protected_item,
     info_item,
     dark_mode_toggle_item,
+    contact_item,
 )
 from .user.list import user_list
 
@@ -40,9 +41,11 @@ def index() -> rx.Component:
     return rx.vstack(
         rx.text("Home"),
         login_item(),
+        login_item(),
         logout_item(),
         protected_item(),
         info_item(),
+        contact_item(),
         user_list(),
         dark_mode_toggle_item(),
         autocomplete_search(),
@@ -57,5 +60,6 @@ app.add_page(
     route=routes.LOGOUT_ROUTE,
     title="Logout",
 )
+app.add_page(contact_page, routes.CONTACT_ROUTE, title="Contact")
 app.add_page(protected_page, routes.PROTECTED_ROUTE, title="Protected")
 app.add_page(info_page, routes.INFO_ROUTE, title="Info")

@@ -11,7 +11,7 @@ class AutocompleteUserState(rx.State):
 
     search_text: str = ""
 
-    @rx.var
+    @rx.var(cache=False)
     def suggestions(self) -> list[LocalUser]:
         """Obtiene una lista de usuarios que coinciden con el texto de búsqueda."""
         if not self.search_text:

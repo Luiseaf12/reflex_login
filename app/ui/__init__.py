@@ -1,4 +1,5 @@
 from .components import (
+    contact_item,
     dark_mode_toggle_item,
     index_item,
     info_item,
@@ -10,6 +11,7 @@ from .components import (
 from .form_field import form_field
 
 __all__ = [
+    "contact_item",
     "dark_mode_toggle_item",
     "index_item",
     "info_item",
