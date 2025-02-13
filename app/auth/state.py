@@ -3,7 +3,7 @@ from .local_auth import LocalAuthState
 from typing import Optional
 from sqlmodel import select, Session
 
-from .model import LocalUser
+from ..models import LocalUser
 
 
 class SessionState(LocalAuthState):

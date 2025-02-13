@@ -19,5 +19,8 @@ class NavState(rx.State):
     def to_contact(self):
         return rx.redirect(routes.CONTACT_ROUTE)
 
+    def to_registration(self):
+        return rx.redirect(routes.REGISTRATION_ROUTE)
+
     def to_protected(self):
         return rx.redirect(routes.PROTECTED_ROUTE)

@@ -8,7 +8,7 @@ from sqlmodel import select
 
 from . import routes
 from .local_auth import LocalAuthState
-from .model import LocalUser
+from ..models import LocalUser
 
 
 class LoginState(LocalAuthState):

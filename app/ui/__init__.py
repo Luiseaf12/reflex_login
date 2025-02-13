@@ -6,6 +6,7 @@ from .components import (
     logout_item,
     login_item,
     protected_item,
+    registration_item,
 )
 
 from .form_field import form_field
@@ -18,5 +19,6 @@ __all__ = [
     "logout_item",
     "login_item",
     "protected_item",
+    "registration_item",
     "form_field",
 ]

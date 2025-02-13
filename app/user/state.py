@@ -2,7 +2,7 @@ import reflex as rx
 from sqlmodel import select
 from typing import List, Optional, Union, Dict, Any
 
-from ..auth.model import LocalUser
+from ..models import LocalUser
 
 
 class UserState(rx.State):

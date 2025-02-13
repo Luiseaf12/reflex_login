@@ -4,6 +4,7 @@ import reflex as rx
 
 from .login import LoginState
 from .state import SessionState
+from .registration import RegistrationState
 from .components import input_100w, MIN_WIDTH, PADDING_TOP
 
 
@@ -72,3 +73,61 @@ def logout_page() -> rx.Component:
         id="my-child",
     )
     return my_child
+
+
+def register_error() -> rx.Component:
+    """Render the registration error message."""
+    return rx.cond(
+        RegistrationState.error_message != "",
+        rx.callout(
+            RegistrationState.error_message,
+            icon="triangle_alert",
+            color_scheme="red",
+            role="alert",
+            width="100%",
+        ),
+    )
+
+
+def register_form() -> rx.Component:
+    """Render the registration form."""
+    return rx.form(
+        rx.vstack(
+            rx.heading("Create an account", size="7"),
+            register_error(),
+            rx.text("Username"),
+            input_100w("username"),
+            rx.text("Email"),
+            input_100w("email", type="email"),
+            rx.text("Password"),
+            input_100w("password", type="password"),
+            rx.text("Confirm Password"),
+            input_100w("confirm_password", type="password"),
+            rx.button("Sign up", width="100%"),
+            rx.center(
+                rx.link("Login", on_click=lambda: rx.redirect("/login")),
+                width="100%",
+            ),
+            min_width=MIN_WIDTH,
+        ),
+        on_submit=RegistrationState.handle_registration,
+    )
+
+
+def registration_page() -> rx.Component:
+    """Render the registration page.
+
+    Returns:
+        A reflex component.
+    """
+
+    return rx.center(
+        rx.cond(
+            RegistrationState.success,
+            rx.vstack(
+                rx.text("Registration successful!"),
+            ),
+            rx.card(register_form()),
+        ),
+        padding_top=PADDING_TOP,
+    )

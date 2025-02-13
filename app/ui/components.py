@@ -77,32 +77,6 @@ def login_item() -> rx.Component:
         width="100%",
     )
 
-
-def protected_item() -> rx.Component:
-    return rx.box(
-        rx.hstack(
-            rx.icon("shield-check"),
-            rx.text("pagina protegida", size="4"),
-            width="100%",
-            paddingX="0.5rem",
-            paddingY="0.75rem",
-            align="center",
-            style={
-                "_hover": {
-                    "cursor": "pointer",
-                    "bg": rx.color("accent", 4),
-                    "color": rx.color("accent", 11),
-                },
-                "color": rx.color("accent", 11),
-                "borderRadius": "0.5em",
-            },
-        ),
-        on_click=NavState.to_protected,
-        as_="button",
-        width="100%",
-    )
-
-
 def info_item() -> rx.Component:
     return rx.box(
         rx.hstack(
@@ -184,5 +158,53 @@ def dark_mode_toggle_item() -> rx.Component:
         as_="button",
         underline="none",
         weight="medium",
+        width="100%",
+    )
+
+def registration_item() -> rx.Component:
+    return rx.box(
+        rx.hstack(
+            rx.icon("user-plus"),
+            rx.text("Registro", size="4"),
+            width="100%",
+            paddingX="0.5rem",
+            paddingY="0.75rem",
+            align="center",
+            style={
+                "_hover": {
+                    "cursor": "pointer",
+                    "bg": rx.color("accent", 4),
+                    "color": rx.color("accent", 11),
+                },
+                "color": rx.color("accent", 11),
+                "borderRadius": "0.5em",
+            },
+        ),
+        on_click=NavState.to_registration,
+        as_="button",
+        width="100%",
+    )
+
+def protected_item() -> rx.Component:
+    return rx.box(
+        rx.hstack(
+            rx.icon("shield-check"),
+            rx.text("pagina protegida", size="4"),
+            width="100%",
+            paddingX="0.5rem",
+            paddingY="0.75rem",
+            align="center",
+            style={
+                "_hover": {
+                    "cursor": "pointer",
+                    "bg": rx.color("accent", 4),
+                    "color": rx.color("accent", 11),
+                },
+                "color": rx.color("accent", 11),
+                "borderRadius": "0.5em",
+            },
+        ),
+        on_click=NavState.to_protected,
+        as_="button",
         width="100%",
     )
