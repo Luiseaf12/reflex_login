@@ -2,7 +2,6 @@ import reflex as rx
 from sqlmodel import select
 from sqlalchemy.orm import joinedload
 from typing import List, Optional, Union, Dict, Any
-
 from ..models import UserModel
 
 
@@ -36,17 +35,21 @@ class UserState(rx.State):
             self.show_add_form = False  # Aseguramos que el otro diálogo esté cerrado
 
     def clear_form(self):
-        """Clear the form fields."""
+        """Limpia el formulario y estados relacionados."""
         try:
+            # Limpiar campos del formulario
             self.username = ""
             self.password = ""
             self.email = ""
             self.department_id = None
             self.error_message = ""
+            
+            # Limpiar estados de diálogo
             self.show_add_form = False
             self.show_edit_form = False
             self.edit_mode = False
             self.user_id = None
+                
         except Exception as e:
             self.error_message = f"Error al limpiar el formulario: {str(e)}"
 

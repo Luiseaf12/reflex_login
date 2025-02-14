@@ -1,6 +1,7 @@
 import reflex as rx
 from ..ui.form_field import form_field
 from .state import UserState
+from .search_user import search_dialog
 
 
 # Atoms (Átomos)
@@ -123,9 +124,13 @@ def user_form_fields() -> rx.Component:
                     align="center",
                     spacing="2",
                 ),
-                rx.input(
-                    placeholder="id del departamento",
-                    type="text",
+                search_dialog(
+                    model_name="DepartmentModel",
+                    search_property="nombre",
+                    return_property="id",
+                    display_property="nombre",
+                    item_name="departamento",
+                    width="100%",
                     id="department_id",
                     name="department_id",
                     required=True,

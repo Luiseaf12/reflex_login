@@ -15,10 +15,8 @@ from .ui import (
 from .user.list import user_list
 from .department.list import department_list
 
+
 app = rx.App()
-
-
-
 
 
 def index() -> rx.Component:

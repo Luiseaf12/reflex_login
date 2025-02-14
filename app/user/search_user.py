@@ -143,13 +143,38 @@ class SearchUserState(rx.State):
             )
 
     def set_selected_item(self, item_id: str, item_name: str):
-        self.selected_item_id = item_id
-        self.selected_item_name = item_name
-        self.input_value = item_id
-        self.show_search_form = False
-        self.search_text = ""
-        self.search_results = []
-        self.error_message = ""
+        """Establece el elemento seleccionado."""
+        try:
+            # Convertir el ID al tipo correcto según el modelo
+            if self._model and hasattr(self._model, self.return_property):
+                field = self._model.__fields__[self.return_property]
+                field_type = field.type_
+                
+                # Si el tipo es Optional[int], extraer el tipo interno
+                if hasattr(field_type, "__origin__") and field_type.__origin__ is Optional:
+                    field_type = field_type.__args__[0]
+                
+                # Convertir el valor al tipo correcto
+                if field_type is int:
+                    converted_id = int(item_id)
+                    self.input_value = str(converted_id)
+                    self.selected_item_id = str(converted_id)
+                else:
+                    self.input_value = str(item_id)
+                    self.selected_item_id = str(item_id)
+            else:
+                self.input_value = str(item_id)
+                self.selected_item_id = str(item_id)
+                
+            self.selected_item_name = item_name
+            self.show_search_form = False
+            self.reset_search()
+            
+        except (ValueError, TypeError) as e:
+            self.error_message = f"Error al convertir el valor: {str(e)}"
+            self.selected_item_id = ""
+            self.selected_item_name = ""
+            self.input_value = ""
 
 # ============================================================================
 # Componentes
