@@ -165,8 +165,8 @@ def add_user_button() -> rx.Component:
     """Organismo que representa el diálogo completo para agregar usuario."""
     return rx.dialog.root(
         rx.dialog.trigger(
-            icon_button("plus", "Agregar Usuario"),
-            on_click=UserState.toggle_form,
+            icon_button("users", "Agregar Usuario"),
+            on_click=UserState.toggle_add_form,
         ),
         rx.dialog.content(
             dialog_header(),
@@ -181,5 +181,5 @@ def add_user_button() -> rx.Component:
             border=f"2px solid {rx.color('accent', 7)}",
             border_radius="25px",
         ),
-        open=UserState.show_form,  # Control del estado del diálogo
+        open=UserState.show_add_form,
     )

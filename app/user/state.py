@@ -11,27 +11,41 @@ class UserState(rx.State):
     username: str = ""
     password: str = ""
     email: str = ""
-    show_form: bool = False
+    show_add_form: bool = False  # Para el diálogo de agregar
+    show_edit_form: bool = False  # Para el diálogo de editar
     error_message: str = ""
     edit_mode: bool = False
     user_id: Optional[int] = None
 
-    def toggle_form(self):
-        """Toggle the form visibility."""
-        if self.show_form:
+    def toggle_add_form(self):
+        """Toggle the add form visibility."""
+        if self.show_add_form:
             self.clear_form()
         else:
-            self.show_form = True
+            self.show_add_form = True
+            self.show_edit_form = False  # Aseguramos que el otro diálogo esté cerrado
+
+    def toggle_edit_form(self):
+        """Toggle the edit form visibility."""
+        if self.show_edit_form:
+            self.clear_form()
+        else:
+            self.show_edit_form = True
+            self.show_add_form = False  # Aseguramos que el otro diálogo esté cerrado
 
     def clear_form(self):
         """Clear the form fields."""
-        self.username = ""
-        self.password = ""
-        self.email = ""
-        self.error_message = ""
-        self.show_form = False
-        self.edit_mode = False
-        self.user_id = None
+        try:
+            self.username = ""
+            self.password = ""
+            self.email = ""
+            self.error_message = ""
+            self.show_add_form = False
+            self.show_edit_form = False
+            self.edit_mode = False
+            self.user_id = None
+        except Exception as e:
+            self.error_message = f"Error al limpiar el formulario: {str(e)}"
 
     def set_edit_user(self, user: Any):
         """Set user data for editing."""
@@ -58,7 +72,7 @@ class UserState(rx.State):
                 self.email = db_user.email
                 self.password = ""  # No mostrar contraseña actual
                 self.edit_mode = True
-                self.show_form = True
+                self.show_edit_form = True
                 self.error_message = ""
 
         except Exception as e:

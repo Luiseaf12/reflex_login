@@ -145,5 +145,5 @@ def edit_user_button(user: dict) -> rx.Component:
             border=f"2px solid {rx.color('accent', 7)}",
             border_radius="25px",
         ),
-        open=UserState.show_form,
+        open=UserState.show_edit_form,  # Usamos el nuevo estado
     )

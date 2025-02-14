@@ -3,7 +3,7 @@ from ..ui.form_field import form_field
 from .state import ListState
 from .add import add_user_button
 from .edit import edit_user_button
-from ..ui.search_user import search_dialog as search_user
+from .search_user import search_dialog as search_user
 
 
 def user_list() -> rx.Component:
