@@ -13,7 +13,7 @@ from .ui import (
     contact_item,
 )
 from .user.list import user_list
-
+from .department.list import department_list
 
 app = rx.App()
 
@@ -32,6 +32,7 @@ def index() -> rx.Component:
         contact_item(),
         user_list(),
         dark_mode_toggle_item(),
+        department_list(),
         padding="2em",
     )
 

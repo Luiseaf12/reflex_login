@@ -1,5 +1,6 @@
 import reflex as rx
 from sqlmodel import select
+from sqlalchemy.orm import joinedload
 from typing import List, Optional, Union, Dict, Any
 
 from ..models import UserModel
@@ -11,6 +12,7 @@ class UserState(rx.State):
     username: str = ""
     password: str = ""
     email: str = ""
+    department_id: Optional[int] = None
     show_add_form: bool = False  # Para el diálogo de agregar
     show_edit_form: bool = False  # Para el diálogo de editar
     error_message: str = ""
@@ -39,6 +41,7 @@ class UserState(rx.State):
             self.username = ""
             self.password = ""
             self.email = ""
+            self.department_id = None
             self.error_message = ""
             self.show_add_form = False
             self.show_edit_form = False
@@ -71,6 +74,7 @@ class UserState(rx.State):
                 self.username = db_user.username
                 self.email = db_user.email
                 self.password = ""  # No mostrar contraseña actual
+                self.department_id = db_user.department_id
                 self.edit_mode = True
                 self.show_edit_form = True
                 self.error_message = ""
@@ -85,6 +89,7 @@ class UserState(rx.State):
         self.username = form_data.get("username", "")
         self.password = form_data.get("password", "")
         self.email = form_data.get("email", "")
+        self.department_id = form_data.get("department_id", None)
 
         if not self.username or not self.password or not self.email:
             self.error_message = "Todos los campos son requeridos"
@@ -106,6 +111,7 @@ class UserState(rx.State):
                 password_hash=UserModel.hash_password(self.password),
                 email=self.email,
                 enabled=True,
+                department_id=self.department_id,
             )
             session.add(new_user)
             session.commit()
@@ -124,6 +130,7 @@ class UserState(rx.State):
         username = form_data.get("username", self.username).strip()
         email = form_data.get("email", self.email).strip()
         password = form_data.get("password", "").strip()
+        department_id = form_data.get("department_id", self.department_id)
 
         if not username or not email:
             self.error_message = "Username y email son requeridos"
@@ -155,6 +162,8 @@ class UserState(rx.State):
                 user.email = email
                 if password:  # Solo actualizar contraseña si se proporciona una nueva
                     user.password_hash = UserModel.hash_password(password)
+                if department_id:
+                    user.department_id = department_id
 
                 session.add(user)
                 session.commit()
@@ -179,13 +188,41 @@ class UserState(rx.State):
         self.email = email
         self.error_message = ""
 
+    def set_department_id(self, department_id: str):
+        """Set department_id field."""
+        try:
+            # Convertir el string a int o None si está vacío
+            self.department_id = int(department_id) if department_id and department_id.strip() else None
+            self.error_message = ""
+        except ValueError:
+            self.department_id = None
+            self.error_message = "ID de departamento inválido"
+
 
 class ListState(rx.State):
     """State for user listing."""
 
-    @rx.var(cache=False)
-    def users(self) -> List[UserModel]:
-        """Get all users from database."""
-        with rx.session() as session:
-            statement = select(UserModel)
-            return session.exec(statement).all()
+    users: List[UserModel] = []  # Inicializamos la lista vacía
+    has_users: bool = False  # Flag para indicar si hay usuarios
+
+    def on_mount(self):
+        """Se ejecuta cuando el componente se monta."""
+        self.get_users()
+
+    def get_users(self) -> None:
+        """Obtiene todos los usuarios de la base de datos."""
+        try:
+            with rx.session() as session:
+                # Usamos joinedload para cargar la relación department de manera eager
+                statement = select(UserModel).options(joinedload(UserModel.department))
+                result = session.exec(statement).all()
+                self.users = result
+                self.has_users = bool(result)
+        except Exception as e:
+            print(f"Error al obtener usuarios: {str(e)}")
+            self.users = []
+            self.has_users = False
+
+    def on_load(self):
+        """Se ejecuta cuando la página se carga."""
+        self.get_users()

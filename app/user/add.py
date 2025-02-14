@@ -114,6 +114,27 @@ def user_form_fields() -> rx.Component:
             ),
             name="email",
         ),
+        rx.form.field(
+            rx.flex(
+                rx.hstack(
+                    rx.icon("album", size=16, stroke_width=1.5),
+                    rx.form.label("Departamento"),
+                    rx.text("*", color="red"),
+                    align="center",
+                    spacing="2",
+                ),
+                rx.input(
+                    placeholder="id del departamento",
+                    type="text",
+                    id="department_id",
+                    name="department_id",
+                    required=True,
+                ),
+                direction="column",
+                spacing="1",
+            ),
+            name="department_id",
+        ),
         direction="column",
         spacing="3",
     )

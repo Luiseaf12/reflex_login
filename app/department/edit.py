@@ -1,6 +1,6 @@
 import reflex as rx
 from ..ui.form_field import form_field
-from .state import UserState
+from .state import DepartamentState
 
 
 # Atoms (Átomos)
@@ -21,12 +21,12 @@ def edit_dialog_header() -> rx.Component:
         badge_icon("pencil"),
         rx.vstack(
             rx.dialog.title(
-                "Editar usuario",
+                "Editar departamento",
                 weight="bold",
                 margin="0",
             ),
             rx.dialog.description(
-                "Modifica la información del usuario",
+                "Modifica la información del departamento",
             ),
             spacing="1",
             height="100%",
@@ -44,43 +44,13 @@ def edit_form_fields() -> rx.Component:
     """Molécula que agrupa los campos del formulario de edición."""
     return rx.flex(
         form_field(
-            "Usuario",
-            "Nombre de usuario",
-            "text",
-            "username",
-            "user",
-            value=UserState.username,
-            on_change=UserState.set_username,
-            required=True,
-        ),
-        form_field(
-            "Contraseña",
-            "Dejar vacío para mantener la actual",
-            "password",
-            "password",
-            "lock",
-            value=UserState.password,
-            on_change=UserState.set_password,
-            required=False,
-        ),
-        form_field(
-            "Email",
-            "usuario@dominio.com",
-            "email",
-            "email",
-            "mail",
-            value=UserState.email,
-            on_change=UserState.set_email,
-            required=True,
-        ),
-        form_field(
             "Departamento",
-            "id del departamento",
+            "Nombre de departamento",
             "text",
-            "department_id",
-            "album",
-            value=UserState.department_id,
-            on_change=UserState.set_department_id,
+            "nombre",
+            "activity",
+            value=DepartamentState.nombre,
+            on_change=DepartamentState.set_nombre,
             required=True,
         ),
         direction="column",
@@ -96,7 +66,7 @@ def edit_form_actions() -> rx.Component:
                 "Cancelar",
                 variant="soft",
                 color_scheme="gray",
-                on_click=UserState.clear_form,
+                on_click=DepartamentState.clear_form,
             ),
         ),
         rx.button(
@@ -112,13 +82,13 @@ def edit_form_actions() -> rx.Component:
 
 
 # Organisms (Organismos)
-def edit_user_form() -> rx.Component:
-    """Organismo que representa el formulario de edición de usuario."""
+def edit_department_form() -> rx.Component:
+    """Organismo que representa el formulario de edición de departamento."""
     return rx.form.root(
         rx.flex(
             edit_form_fields(),
             rx.text(
-                UserState.error_message,
+                DepartamentState.error_message,
                 color="red",
                 size="4",
             ),
@@ -126,26 +96,26 @@ def edit_user_form() -> rx.Component:
             direction="column",
             spacing="4",
         ),
-        on_submit=UserState.update_user,
+        on_submit=DepartamentState.update_department,
         reset_on_submit=False,
     )
 
 
-def edit_user_button(user: dict) -> rx.Component:
-    """Átomo para botón de edición de usuario."""
+def edit_department_button(department: dict) -> rx.Component:
+    """Átomo para botón de edición de departamento."""
     return rx.dialog.root(
         rx.dialog.trigger(
             rx.button(
                 rx.icon("pencil", size=20),
                 size="1",
                 variant="soft",
-                on_click=lambda: UserState.set_edit_user(user),
+                on_click=lambda: DepartamentState.set_edit_department(department),
             ),
         ),
         rx.dialog.content(
             edit_dialog_header(),
             rx.flex(
-                edit_user_form(),
+                edit_department_form(),
                 width="100%",
                 direction="column",
                 spacing="4",
@@ -155,5 +125,5 @@ def edit_user_button(user: dict) -> rx.Component:
             border=f"2px solid {rx.color('accent', 7)}",
             border_radius="25px",
         ),
-        open=UserState.show_edit_form,  # Usamos el nuevo estado
+        open=DepartamentState.show_edit_form,  # Usamos el nuevo estado
     )

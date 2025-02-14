@@ -21,24 +21,37 @@ def user_list() -> rx.Component:
                 rx.table.row(
                     rx.table.column_header_cell("Username"),
                     rx.table.column_header_cell("Email"),
+                    rx.table.column_header_cell("Departamento"),
                     rx.table.column_header_cell("Estado"),
                     rx.table.column_header_cell("Acciones"),
                 )
             ),
             rx.table.body(
-                rx.foreach(
-                    ListState.users,
-                    lambda user: rx.table.row(
-                        rx.table.cell(user.username),
-                        rx.table.cell(user.email),
-                        rx.table.cell(rx.cond(user.enabled, "Activo", "Inactivo")),
+                rx.cond(
+                    ListState.has_users,
+                    rx.foreach(
+                        ListState.users,
+                        lambda user: rx.table.row(
+                            rx.table.cell(user.username),
+                            rx.table.cell(user.email),
+                            rx.table.cell(user.department_id),
+                            rx.table.cell(rx.cond(user.enabled, "Activo", "Inactivo")),
+                            rx.table.cell(
+                                edit_user_button(user)
+                            ),
+                        ),
+                    ),
+                    rx.table.row(
                         rx.table.cell(
-                        edit_user_button(user)
-                        ),  # Pasamos el objeto user completo
+                            rx.text("No hay usuarios registrados", color="gray"),
+                            colspan=5,
+                            text_align="center",
+                        )
                     ),
                 )
             ),
             width="100%",
         ),
         width="100%",
+        on_mount=ListState.on_mount,
     )
