@@ -8,7 +8,7 @@ from sqlmodel import select
 
 from . import routes
 from .local_auth import LocalAuthState
-from ..models import LocalUser
+from ..models import UserModel
 
 
 class LoginState(LocalAuthState):
@@ -21,7 +21,7 @@ class LoginState(LocalAuthState):
     def user_list(self) -> list:
         """Get all users from database."""
         with rx.session() as session:
-            statement = select(LocalUser)
+            statement = select(UserModel)
             return session.exec(statement).all()
 
     def on_submit(self, form_data) -> rx.event.EventSpec:
@@ -35,7 +35,7 @@ class LoginState(LocalAuthState):
         password = form_data["password"]
         with rx.session() as session:
             user = session.exec(
-                select(LocalUser).where(LocalUser.username == username)
+                select(UserModel).where(UserModel.username == username)
             ).one_or_none()
         if user is not None and not user.enabled:
             self.error_message = "This account is disabled."

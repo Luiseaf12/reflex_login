@@ -3,7 +3,7 @@ from .local_auth import LocalAuthState
 from typing import Optional
 from sqlmodel import select, Session
 
-from ..models import LocalUser
+from ..models import UserModel
 
 
 class SessionState(LocalAuthState):
@@ -28,12 +28,12 @@ class SessionState(LocalAuthState):
         return self.authenticated_user.username
 
     @rx.var(cache=True)
-    def authenticated_user_info(self) -> LocalUser | None:
+    def authenticated_user_info(self) -> UserModel | None:
         if self.authenticated_user.id < 0:
             return None
         with rx.session() as session:
-            statement = select(LocalUser).where(
-                LocalUser.id == self.authenticated_user.id
+            statement = select(UserModel).where(
+                UserModel.id == self.authenticated_user.id
             )
             result = session.exec(statement).one_or_none()
             if result is None:

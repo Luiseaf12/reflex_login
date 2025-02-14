@@ -2,7 +2,7 @@ import reflex as rx
 from sqlmodel import select
 from typing import List, Optional, Union, Dict, Any
 
-from ..models import LocalUser
+from ..models import UserModel
 
 
 class UserState(rx.State):
@@ -47,7 +47,7 @@ class UserState(rx.State):
 
             # Buscar el usuario en la base de datos
             with rx.session() as session:
-                db_user = session.get(LocalUser, user_id)
+                db_user = session.get(UserModel, user_id)
                 if not db_user:
                     self.error_message = "Usuario no encontrado"
                     return
@@ -79,7 +79,7 @@ class UserState(rx.State):
         with rx.session() as session:
             # Check if username already exists
             existing_user = session.exec(
-                select(LocalUser).where(LocalUser.username == self.username)
+                select(UserModel).where(UserModel.username == self.username)
             ).first()
 
             if existing_user:
@@ -87,9 +87,9 @@ class UserState(rx.State):
                 return
 
             # Create new user
-            new_user = LocalUser(
+            new_user = UserModel(
                 username=self.username,
-                password_hash=LocalUser.hash_password(self.password),
+                password_hash=UserModel.hash_password(self.password),
                 email=self.email,
                 enabled=True,
             )
@@ -118,7 +118,7 @@ class UserState(rx.State):
         try:
             with rx.session() as session:
                 # Get user to update
-                user = session.get(LocalUser, self.user_id)
+                user = session.get(UserModel, self.user_id)
                 if not user:
                     self.error_message = "Usuario no encontrado"
                     return
@@ -126,9 +126,9 @@ class UserState(rx.State):
                 # Check if new username is already taken by another user
                 if username != user.username:  # Solo verificar si el username cambió
                     existing_user = session.exec(
-                        select(LocalUser).where(
-                            LocalUser.username == username, 
-                            LocalUser.id != self.user_id
+                        select(UserModel).where(
+                            UserModel.username == username, 
+                            UserModel.id != self.user_id
                         )
                     ).first()
 
@@ -140,7 +140,7 @@ class UserState(rx.State):
                 user.username = username
                 user.email = email
                 if password:  # Solo actualizar contraseña si se proporciona una nueva
-                    user.password_hash = LocalUser.hash_password(password)
+                    user.password_hash = UserModel.hash_password(password)
 
                 session.add(user)
                 session.commit()
@@ -170,8 +170,8 @@ class ListState(rx.State):
     """State for user listing."""
 
     @rx.var(cache=False)
-    def users(self) -> List[LocalUser]:
+    def users(self) -> List[UserModel]:
         """Get all users from database."""
         with rx.session() as session:
-            statement = select(LocalUser)
+            statement = select(UserModel)
             return session.exec(statement).all()

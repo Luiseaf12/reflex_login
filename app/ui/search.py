@@ -2,7 +2,7 @@ import reflex as rx
 from sqlmodel import select, func
 
 from ..models import (
-    LocalUser,
+    UserModel,
 )
 
 

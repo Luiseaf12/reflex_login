@@ -12,7 +12,7 @@ def badge_icon(icon: str, size: int = 34) -> rx.Component:
         radius="full",
         padding="0.65rem",
     )
-
+ 
 
 # Molecules (Moléculas)
 def edit_dialog_header() -> rx.Component:

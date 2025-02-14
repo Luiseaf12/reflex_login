@@ -14,7 +14,7 @@ from sqlmodel import select
 import reflex as rx
 
 from .auth_session import LocalAuthSession
-from ..models import LocalUser
+from ..models import UserModel
 
 
 AUTH_TOKEN_LOCAL_STORAGE_KEY = "_auth_token"
@@ -27,26 +27,26 @@ class LocalAuthState(rx.State):
     auth_token: str = rx.LocalStorage(name=AUTH_TOKEN_LOCAL_STORAGE_KEY)
 
     @rx.var(cache=True, interval=DEFAULT_AUTH_REFRESH_DELTA)
-    def authenticated_user(self) -> LocalUser:
+    def authenticated_user(self) -> UserModel:
         """The currently authenticated user, or a dummy user if not authenticated.
 
         Returns:
-            A LocalUser instance with id=-1 if not authenticated, or the LocalUser instance
+            A UserModel instance with id=-1 if not authenticated, or the UserModel instance
             corresponding to the currently authenticated user.
         """
         with rx.session() as session:
             result = session.exec(
-                select(LocalUser, LocalAuthSession).where(
+                select(UserModel, LocalAuthSession).where(
                     LocalAuthSession.session_id == self.auth_token,
                     LocalAuthSession.expiration
                     >= datetime.datetime.now(datetime.timezone.utc),
-                    LocalUser.id == LocalAuthSession.user_id,
+                    UserModel.id == LocalAuthSession.user_id,
                 ),
             ).first()
             if result:
                 user, session = result
                 return user
-        return LocalUser(id=-1)  # type: ignore
+        return UserModel(id=-1)  # type: ignore
 
     @rx.var(cache=True, interval=DEFAULT_AUTH_REFRESH_DELTA)
     def is_authenticated(self) -> bool:
