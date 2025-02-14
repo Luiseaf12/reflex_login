@@ -31,10 +31,10 @@ def form_field(
                 value=value,
                 on_change=on_change,
                 required=required,
+                name=name,  # Agregamos el name al input
             ),
             direction="column",
             spacing="1",
         ),
-        name=name,
         width="100%",
     )

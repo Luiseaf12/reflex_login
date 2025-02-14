@@ -1,6 +1,6 @@
 import reflex as rx
 from ..ui.form_field import form_field
-from .state import UserState, ListState
+from .state import UserState
 
 
 # Atoms (Átomos)
@@ -52,29 +52,67 @@ def dialog_header() -> rx.Component:
 def user_form_fields() -> rx.Component:
     """Molécula que agrupa los campos del formulario."""
     return rx.flex(
-        form_field(
-            "Usuario",
-            "Nombre de usuario",
-            "text",
-            "username",
-            "user",
-            required=True,
+        rx.form.field(
+            rx.flex(
+                rx.hstack(
+                    rx.icon("user", size=16, stroke_width=1.5),
+                    rx.form.label("Usuario"),
+                    rx.text("*", color="red"),
+                    align="center",
+                    spacing="2",
+                ),
+                rx.input(
+                    placeholder="Nombre de usuario",
+                    id="username",
+                    name="username",
+                    required=True,
+                ),
+                direction="column",
+                spacing="1",
+            ),
+            name="username",
         ),
-        form_field(
-            "Contraseña",
-            "********",
-            "password",
-            "password",
-            "lock",
-            required=True,
+        rx.form.field(
+            rx.flex(
+                rx.hstack(
+                    rx.icon("lock", size=16, stroke_width=1.5),
+                    rx.form.label("Contraseña"),
+                    rx.text("*", color="red"),
+                    align="center",
+                    spacing="2",
+                ),
+                rx.input(
+                    placeholder="********",
+                    type="password",
+                    id="password",
+                    name="password",
+                    required=True,
+                ),
+                direction="column",
+                spacing="1",
+            ),
+            name="password",
         ),
-        form_field(
-            "Email",
-            "usuario@dominio.com",
-            "email",
-            "email",
-            "mail",
-            required=True,
+        rx.form.field(
+            rx.flex(
+                rx.hstack(
+                    rx.icon("mail", size=16, stroke_width=1.5),
+                    rx.form.label("Email"),
+                    rx.text("*", color="red"),
+                    align="center",
+                    spacing="2",
+                ),
+                rx.input(
+                    placeholder="usuario@dominio.com",
+                    type="email",
+                    id="email",
+                    name="email",
+                    required=True,
+                ),
+                direction="column",
+                spacing="1",
+            ),
+            name="email",
         ),
         direction="column",
         spacing="3",
@@ -84,13 +122,12 @@ def user_form_fields() -> rx.Component:
 def form_actions() -> rx.Component:
     """Molécula para los botones de acción."""
     return rx.flex(
-        rx.dialog.close(
-            rx.button(
-                "Cancelar",
-                variant="soft",
-                color_scheme="gray",
-                on_click=UserState.clear_form,
-            ),
+        rx.button(
+            "Cancelar",
+            variant="soft",
+            color_scheme="gray",
+            type="button",
+            on_click=UserState.clear_form,
         ),
         rx.button(
             "Crear Usuario",

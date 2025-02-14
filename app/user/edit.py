@@ -55,7 +55,7 @@ def edit_form_fields() -> rx.Component:
         ),
         form_field(
             "Contraseña",
-            "********",
+            "Dejar vacío para mantener la actual",
             "password",
             "password",
             "lock",

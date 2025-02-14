@@ -106,43 +106,49 @@ class UserState(rx.State):
             self.error_message = "Error: Usuario no encontrado"
             return
 
-        self.username = form_data.get("username", "")
-        self.email = form_data.get("email", "")
-        password = form_data.get("password", "")
+        # Obtener los valores del formulario
+        username = form_data.get("username", self.username).strip()
+        email = form_data.get("email", self.email).strip()
+        password = form_data.get("password", "").strip()
 
-        if not self.username or not self.email:
+        if not username or not email:
             self.error_message = "Username y email son requeridos"
             return
 
-        with rx.session() as session:
-            # Get user to update
-            user = session.get(LocalUser, self.user_id)
-            if not user:
-                self.error_message = "Usuario no encontrado"
-                return
+        try:
+            with rx.session() as session:
+                # Get user to update
+                user = session.get(LocalUser, self.user_id)
+                if not user:
+                    self.error_message = "Usuario no encontrado"
+                    return
 
-            # Check if new username is already taken by another user
-            existing_user = session.exec(
-                select(LocalUser).where(
-                    LocalUser.username == self.username, LocalUser.id != self.user_id
-                )
-            ).first()
+                # Check if new username is already taken by another user
+                if username != user.username:  # Solo verificar si el username cambió
+                    existing_user = session.exec(
+                        select(LocalUser).where(
+                            LocalUser.username == username, 
+                            LocalUser.id != self.user_id
+                        )
+                    ).first()
 
-            if existing_user:
-                self.error_message = "El nombre de usuario ya existe"
-                return
+                    if existing_user:
+                        self.error_message = "El nombre de usuario ya existe"
+                        return
 
-            # Update user data
-            user.username = self.username
-            user.email = self.email
-            if password:  # Solo actualizar contraseña si se proporciona una nueva
-                user.password_hash = LocalUser.hash_password(password)
+                # Update user data
+                user.username = username
+                user.email = email
+                if password:  # Solo actualizar contraseña si se proporciona una nueva
+                    user.password_hash = LocalUser.hash_password(password)
 
-            session.add(user)
-            session.commit()
+                session.add(user)
+                session.commit()
 
-            # Clear form and close dialog only on success
-            self.clear_form()
+                # Clear form and close dialog only on success
+                self.clear_form()
+        except Exception as e:
+            self.error_message = f"Error al actualizar usuario: {str(e)}"
 
     def set_username(self, username: str):
         """Set username field."""

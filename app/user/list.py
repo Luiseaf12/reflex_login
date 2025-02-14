@@ -13,7 +13,7 @@ def user_list() -> rx.Component:
             width="100%",
             justify="between",
         ),
-        # add_user_button(),
+        add_user_button(),
         rx.table.root(
             rx.table.header(
                 rx.table.row(
@@ -31,7 +31,7 @@ def user_list() -> rx.Component:
                         rx.table.cell(user.email),
                         rx.table.cell(rx.cond(user.enabled, "Activo", "Inactivo")),
                         rx.table.cell(
-                           # edit_user_button(user)
+                        edit_user_button(user)
                         ),  # Pasamos el objeto user completo
                     ),
                 )
