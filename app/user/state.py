@@ -49,9 +49,10 @@ class UserState(rx.State):
             self.show_edit_form = False
             self.edit_mode = False
             self.user_id = None
-                
         except Exception as e:
             self.error_message = f"Error al limpiar el formulario: {str(e)}"
+
+
 
     def set_edit_user(self, user: Any):
         """Set user data for editing."""
@@ -191,15 +192,16 @@ class UserState(rx.State):
         self.email = email
         self.error_message = ""
 
-    def set_department_id(self, department_id: str):
-        """Set department_id field."""
+    def set_department_id(self, value: str):
+        """Establece el ID del departamento."""
         try:
-            # Convertir el string a int o None si está vacío
-            self.department_id = int(department_id) if department_id and department_id.strip() else None
-            self.error_message = ""
-        except ValueError:
+            if value and value.strip():
+                self.department_id = int(value)
+            else:
+                self.department_id = None
+        except (ValueError, TypeError) as e:
+            self.error_message = f"Error al convertir el ID del departamento: {str(e)}"
             self.department_id = None
-            self.error_message = "ID de departamento inválido"
 
 
 class ListState(rx.State):

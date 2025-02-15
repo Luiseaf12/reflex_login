@@ -150,6 +150,15 @@ class SearchDepartamentState(rx.State):
         self.search_text = ""
         self.search_results = []
         self.error_message = ""
+    
+    def reset_selection(self):
+        """Resetea los valores de la selección."""
+        self.selected_item_id = ""
+        self.selected_item_name = ""
+        self.input_value = ""
+        self.input_error = ""
+        self.search_text = ""
+        self.search_results = []
 
 # ============================================================================
 # Componentes

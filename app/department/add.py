@@ -1,6 +1,7 @@
 import reflex as rx
 from ..ui.form_field import form_field
 from .state import DepartamentState
+from .search_department import SearchDepartamentState
 
 
 # Atoms (Átomos)
@@ -138,6 +139,7 @@ def add_department_button() -> rx.Component:
             padding="1.5em",
             border=f"2px solid {rx.color('accent', 7)}",
             border_radius="25px",
+            on_open_change=SearchDepartamentState.reset_selection,
         ),
         open=DepartamentState.show_add_form,
     )

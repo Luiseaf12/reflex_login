@@ -15,7 +15,7 @@ def user_list() -> rx.Component:
             justify="between",
         ),
         add_user_button(),
-        search_user(),
+        #search_user(),
         rx.table.root(
             rx.table.header(
                 rx.table.row(

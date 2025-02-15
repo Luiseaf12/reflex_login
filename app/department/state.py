@@ -15,13 +15,19 @@ class DepartamentState(rx.State):
     edit_mode: bool = False
     department_id: Optional[int] = None
 
+    # def toggle_add_form(self):
+    #     """Toggle the add form visibility."""
+    #     if self.show_add_form:
+    #         self.clear_form()
+    #     else:
+    #         self.show_add_form = True
+    #         self.show_edit_form = False  # Aseguramos que el otro diálogo esté cerrado
+    
     def toggle_add_form(self):
-        """Toggle the add form visibility."""
-        if self.show_add_form:
-            self.clear_form()
-        else:
-            self.show_add_form = True
-            self.show_edit_form = False  # Aseguramos que el otro diálogo esté cerrado
+        """Abre/cierra el formulario y resetea el buscador."""
+        self.show_add_form = not self.show_add_form
+        if not self.show_add_form:
+            SearchDepartamentState.reset_selection()  # Resetear al cerrar
 
     def toggle_edit_form(self):
         """Toggle the edit form visibility."""

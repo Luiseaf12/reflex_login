@@ -60,6 +60,8 @@ class SearchUserState(rx.State):
 
     def close_search_form(self):
         """Cierra el formulario y limpia la búsqueda."""
+        self.selected_item_id = ""
+        self.selected_item_name = ""
         self.show_search_form = False
         self.reset_search()
 
@@ -103,27 +105,81 @@ class SearchUserState(rx.State):
 
     async def validate_input_id(self, value: str):
         """Valida el valor del input."""
-        self.input_value = value
-        self.input_error = ""
-        
-        if not value or not self._model:
-            return
+        try:
+            if not value:
+                self.input_error = ""
+                self.selected_item_id = ""
+                self.selected_item_name = ""
+                # Limpiar el valor en el estado padre
+                parent_state = self.get_parent_state()
+                if parent_state and hasattr(parent_state, self.return_property):
+                    parent_state.department_id = None
+                return
+                
+            if not self._model:
+                self.input_error = "Modelo no configurado"
+                return
+                
+            # Obtener el tipo del campo
+            field = self._model.__fields__[self.return_property]
+            field_type = field.type_
             
-        with rx.session() as session:
-            try:
+            # Si el tipo es Optional[int], extraer el tipo interno
+            if hasattr(field_type, "__origin__") and field_type.__origin__ is Optional:
+                field_type = field_type.__args__[0]
+            
+            # Convertir el valor al tipo correcto
+            if field_type is int:
+                converted_value = int(value)
+            else:
+                converted_value = value
+            
+            # Buscar el elemento en la base de datos
+            with rx.session() as session:
                 return_attr = getattr(self._model, self.return_property)
+                display_attr = getattr(self._model, self.display_property)
+                
                 item = session.exec(
-                    select(self._model).where(return_attr == value)
+                    select(self._model).where(return_attr == converted_value)
                 ).first()
                 
                 if item:
-                    self.selected_item_id = str(getattr(item, self.return_property))
+                    self.input_error = ""
+                    self.selected_item_id = str(converted_value)
+                    self.selected_item_name = str(getattr(item, self.display_property))
+                    
+                    # Establecer el valor en el estado padre
+                    parent_state = self.get_parent_state()
+                    if parent_state and hasattr(parent_state, self.return_property):
+                        if field_type is int:
+                            parent_state.department_id = converted_value
+                        else:
+                            parent_state.department_id = value
                 else:
                     self.input_error = "Elemento no encontrado"
                     self.selected_item_id = ""
-            except Exception as e:
-                self.input_error = f"Error de validación: {str(e)}"
-                self.selected_item_id = ""
+                    self.selected_item_name = ""
+                    # Limpiar el valor en el estado padre
+                    parent_state = self.get_parent_state()
+                    if parent_state and hasattr(parent_state, self.return_property):
+                        parent_state.department_id = None
+                    
+        except (ValueError, TypeError) as e:
+            self.input_error = f"Valor inválido: {str(e)}"
+            self.selected_item_id = ""
+            self.selected_item_name = ""
+            # Limpiar el valor en el estado padre
+            parent_state = self.get_parent_state()
+            if parent_state and hasattr(parent_state, self.return_property):
+                parent_state.department_id = None
+        except Exception as e:
+            self.input_error = f"Error de validación: {str(e)}"
+            self.selected_item_id = ""
+            self.selected_item_name = ""
+            # Limpiar el valor en el estado padre
+            parent_state = self.get_parent_state()
+            if parent_state and hasattr(parent_state, self.return_property):
+                parent_state.department_id = None
 
     def handle_f2_key(
         self,
@@ -159,9 +215,19 @@ class SearchUserState(rx.State):
                     converted_id = int(item_id)
                     self.input_value = str(converted_id)
                     self.selected_item_id = str(converted_id)
+                    
+                    # Obtener el estado padre y establecer el valor convertido
+                    parent_state = self.get_parent_state()
+                    if parent_state and hasattr(parent_state, self.return_property):
+                        parent_state.department_id = converted_id
                 else:
                     self.input_value = str(item_id)
                     self.selected_item_id = str(item_id)
+                    
+                    # Obtener el estado padre y establecer el valor como string
+                    parent_state = self.get_parent_state()
+                    if parent_state and hasattr(parent_state, self.return_property):
+                        parent_state.department_id = item_id
             else:
                 self.input_value = str(item_id)
                 self.selected_item_id = str(item_id)
@@ -188,6 +254,7 @@ def search_input(**props) -> rx.Component:
         debounce=300,
         **props
     )
+
 def item_card(item: dict) -> rx.Component:
     return rx.card(
         rx.text(item["display"], size="3", weight="bold"),
@@ -219,14 +286,15 @@ def search_dialog(
     width: str = WIDTH,
     **props
 ) -> rx.Component:
+    """Diálogo de búsqueda."""
     return rx.dialog.root(
         rx.dialog.trigger(
             rx.hstack(
                 rx.input(
                     value=SearchUserState.input_value,
                     on_change=SearchUserState.validate_input_id,
-                    on_key_down=lambda: SearchUserState.handle_f2_key(
-                        "F2",
+                    on_key_down=lambda code: SearchUserState.handle_f2_key(
+                        code,
                         model_name,
                         search_property,
                         return_property,
@@ -247,7 +315,8 @@ def search_dialog(
                     variant="ghost"
                 ),
                 rx.text(SearchUserState.selected_item_name),
-                width="10%"
+                width="10%",
+                align_items="center"
             )
         ),
         rx.dialog.content(
