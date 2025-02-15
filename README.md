@@ -1,11 +1,30 @@
-# auth_reflex
+# Reflex Login System
 
-El repositorio es un ejemplo de un inicio de sesión  en reflex en el cual se utiliza:
+Sistema de autenticación y gestión de usuarios desarrollado con Reflex Framework, implementando una arquitectura moderna y segura.
 
-- MySql: Se utiliza el motor de base mysql y el driver pymysql.
-- Bcrypt: para encriptar la contraseña considerando que las que se encuentran en la base de datos se encuentran encryptadas utilizando este algoritmo.
+## Características Principales
 
-Tener en cuenta que debe tener una base de datos externa corriendo en local o en alguna nube y debe configurar los datos de conexión según su caso
-en el archivo connect_db.py que se encuentra en el directorio repository.
+- **Sistema de Autenticación Robusto**: Implementación de login seguro con encriptación bcrypt para contraseñas
+- **Gestión de Usuarios y Departamentos**: Funcionalidades CRUD completas con búsqueda dinámica
+- **Interfaz Moderna**: UI/UX intuitiva con componentes reactivos
+- **Base de Datos SQL**: Integración con MySQL utilizando SQLModel y Alembic para migraciones
+- **Arquitectura Limpia**: Implementación siguiendo principios SOLID y PEP 8
+- **Búsqueda Dinámica**: Componentes de búsqueda reutilizables con debounce
 
-Éxitos.
+## Tecnologías
+
+- Reflex Framework
+- SQLModel
+- MySQL (con PyMySQL)
+- Bcrypt
+- Alembic
+
+## Características Técnicas
+
+- Manejo de estados con Reflex State
+- Componentes reutilizables
+- Sistema de migraciones de base de datos
+- Validaciones de formularios
+- Manejo seguro de sesiones
+
+Este proyecto sirve como ejemplo práctico de una aplicación web moderna con Python, ideal para aprender sobre autenticación, gestión de usuarios y mejores prácticas de desarrollo. Teniendo componentes encapsulados facilmente re utilizables en otros proyectos
